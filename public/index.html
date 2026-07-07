@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpokenEnglish - Attendance Management & Routing Suite</title>
+    <!-- Premium Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- ============================================================================
+           VIEW 1: SECURE LOGIN SCREEN
+           ============================================================================ -->
+        <section id="login-view" class="view-container active">
+            <div class="login-card">
+                <div class="brand-logo">
+                    <span class="logo-spoken">Spoken</span><span class="logo-english">English</span>
+                </div>
+                <h2>Portal Access</h2>
+                <p class="subtitle">Secure workspace session authorization</p>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Security ID / Email</label>
+                        <input type="email" id="login-email" placeholder="hiam.teacher@spokenenglish.edu"
+                            value="hiam.teacher@spokenenglish.edu" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Security Key</label>
+                        <input type="password" id="login-password" placeholder="••••••••" value="password123" required
+                            autocomplete="current-password">
+                    </div>
+                    <button type="submit" id="btn-login" class="btn-primary">
+                        LOGIN
+                    </button>
+                </form>
+
+                <footer class="login-footer">
+                    <span class="device-badge">Device Authorization: Approved</span>
+                </footer>
+            </div>
+        </section>
+
+        <!-- ============================================================================
+           VIEW 2: MAIN DASHBOARD & SUB-VIEWS (DOCK)
+           ============================================================================ -->
+        <section id="dashboard-view" class="view-container hidden">
+            <!-- Symmetrical Header Panel -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <div class="brand-logo">
+                        <span class="logo-spoken">Spoken</span><span class="logo-english">English</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="dna-badge">Device DNA: Verified ✓</span>
+                    <div class="profile-container">
+                        <div class="profile-avatar">H</div>
+                        <span class="profile-name">Hiam</span>
+                    </div>
+                    <button id="btn-logout" class="btn-icon" title="Terminate Session">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-workspace">
+                <!-- Sidebar Control Center -->
+                <aside class="sidebar-pane">
+                    <nav class="sidebar-nav">
+                        <button class="nav-item active" data-pane="dashboard-pane">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+                            </svg>
+                            <span>Dashboard</span>
+                        </button>
+                        <button class="nav-item" data-pane="classes-pane">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <span>Classes</span>
+                        </button>
+                        <button class="nav-item nav-secondary" data-pane="statistics-pane">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span>Statistics</span>
+                        </button>
+                        <button class="nav-item nav-secondary" data-pane="export-pane">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            <span>Data Export</span>
+                        </button>
+                        <button class="nav-item nav-secondary" data-pane="settings-pane">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Settings</span>
+                        </button>
+                    </nav>
+                </aside>
+
+                <!-- Workspace Container Panes -->
+                <main class="content-pane">
+
+                    <!-- A. SUB-VIEW: DASHBOARD OVERVIEW -->
+                    <div id="dashboard-pane" class="tab-pane active">
+                        <div class="welcome-banner">
+                            <h1>Welcome back, Hiam</h1>
+                            <p>Manage assigned course registries, analyze attendance matrix outputs, and sync with
+                                NeonDB.</p>
+                        </div>
+
+                        <!-- Metrics Grid Layout -->
+                        <div class="metrics-deck">
+                            <div class="metric-card">
+                                <div class="metric-icon primary-tint">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                                    </svg>
+                                </div>
+                                <div class="metric-info">
+                                    <span class="metric-label">Assigned Classes</span>
+                                    <span class="metric-value">04</span>
+                                </div>
+                            </div>
+                            <div class="metric-card metric-card-accent">
+                                <div class="metric-icon risk-tint">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <div class="metric-info">
+                                    <span class="metric-label">Active Enrollment</span>
+                                    <span class="metric-value">120</span>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon success-tint">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="metric-info">
+                                    <span class="metric-label">Roster Presence Today</span>
+                                    <span class="metric-value">98</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Course Ledgers Container -->
+                        <div class="ledger-container">
+                            <div class="ledger-header">
+                                <h2>Active Course Ledgers</h2>
+                                <span class="ledger-count">4 Roster Sheets</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="ledger-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Course Name</th>
+                                            <th>Grade Level</th>
+                                            <th>Roster Capacity</th>
+                                            <th>Sync Status</th>
+                                            <th class="text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ledger-body">
+                                        <tr data-class-id="english-adv">
+                                            <td>
+                                                <div class="course-name-cell">
+                                                    <strong>English Advanced</strong>
+                                                    <span>Core Academic</span>
+                                                </div>
+                                            </td>
+                                            <td>Grade 12</td>
+                                            <td>32 Students</td>
+                                            <td><span class="status-indicator active">Synced</span></td>
+                                            <td class="text-right actions-cell">
+                                                <div class="action-btn-wrapper">
+                                                    <button class="btn-action-view" data-action="view"
+                                                        data-class="English Advanced">View Matrix</button>
+                                                    <button class="btn-action-delete"
+                                                        data-action="archive">Archive</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr data-class-id="speech-pres">
+                                            <td>
+                                                <div class="course-name-cell">
+                                                    <strong>Speech & Presentation</strong>
+                                                    <span>Elective Workshop</span>
+                                                </div>
+                                            </td>
+                                            <td>Grade 10</td>
+                                            <td>28 Students</td>
+                                            <td><span class="status-indicator active">Synced</span></td>
+                                            <td class="text-right actions-cell">
+                                                <div class="action-btn-wrapper">
+                                                    <button class="btn-action-view" data-action="view"
+                                                        data-class="Speech & Presentation">View Matrix</button>
+                                                    <button class="btn-action-delete"
+                                                        data-action="archive">Archive</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr data-class-id="conv-esl">
+                                            <td>
+                                                <div class="course-name-cell">
+                                                    <strong>Conversational ESL</strong>
+                                                    <span>Second Language Program</span>
+                                                </div>
+                                            </td>
+                                            <td>Grade 11</td>
+                                            <td>30 Students</td>
+                                            <td><span class="status-indicator pending">Pending Sync</span></td>
+                                            <td class="text-right actions-cell">
+                                                <div class="action-btn-wrapper">
+                                                    <button class="btn-action-view" data-action="view"
+                                                        data-class="Conversational ESL">View Matrix</button>
+                                                    <button class="btn-action-delete"
+                                                        data-action="archive">Archive</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr data-class-id="prof-writing">
+                                            <td>
+                                                <div class="course-name-cell">
+                                                    <strong>Professional Writing</strong>
+                                                    <span>Core Academic</span>
+                                                </div>
+                                            </td>
+                                            <td>Grade 12</td>
+                                            <td>30 Students</td>
+                                            <td><span class="status-indicator active">Synced</span></td>
+                                            <td class="text-right actions-cell">
+                                                <div class="action-btn-wrapper">
+                                                    <button class="btn-action-view" data-action="view"
+                                                        data-class="Professional Writing">View Matrix</button>
+                                                    <button class="btn-action-delete"
+                                                        data-action="archive">Archive</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- B. SUB-VIEW: CLASSES MANAGEMENT -->
+                    <div id="classes-pane" class="tab-pane hidden">
+                        <div class="pane-header">
+                            <h2>Class Registry Workspace</h2>
+                            <p>Overview of classroom assignments, scheduling indices, and capacity audits</p>
+                        </div>
+                        <div class="classes-grid">
+                            <div class="class-info-card">
+                                <h3>English Advanced</h3>
+                                <div class="class-meta-details">
+                                    <p><strong>Schedule:</strong> Mon / Wed / Fri - 09:00 AM</p>
+                                    <p><strong>Classroom:</strong> Suite 402B</p>
+                                    <p><strong>Term:</strong> Fall 2026</p>
+                                </div>
+                                <div class="class-enrollment-stats">
+                                    <span>Enrollment Audit:</span>
+                                    <strong>32 / 35 seats</strong>
+                                </div>
+                            </div>
+                            <div class="class-info-card">
+                                <h3>Speech & Presentation</h3>
+                                <div class="class-meta-details">
+                                    <p><strong>Schedule:</strong> Tue / Thu - 11:30 AM</p>
+                                    <p><strong>Classroom:</strong> Aud. Annex 1</p>
+                                    <p><strong>Term:</strong> Fall 2026</p>
+                                </div>
+                                <div class="class-enrollment-stats">
+                                    <span>Enrollment Audit:</span>
+                                    <strong>28 / 30 seats</strong>
+                                </div>
+                            </div>
+                            <div class="class-info-card">
+                                <h3>Conversational ESL</h3>
+                                <div class="class-meta-details">
+                                    <p><strong>Schedule:</strong> Mon / Wed - 02:00 PM</p>
+                                    <p><strong>Classroom:</strong> Suite 104</p>
+                                    <p><strong>Term:</strong> Fall 2026</p>
+                                </div>
+                                <div class="class-enrollment-stats">
+                                    <span>Enrollment Audit:</span>
+                                    <strong>30 / 30 seats</strong>
+                                </div>
+                            </div>
+                            <div class="class-info-card">
+                                <h3>Professional Writing</h3>
+                                <div class="class-meta-details">
+                                    <p><strong>Schedule:</strong> Tue / Thu - 08:30 AM</p>
+                                    <p><strong>Classroom:</strong> Suite 512</p>
+                                    <p><strong>Term:</strong> Fall 2026</p>
+                                </div>
+                                <div class="class-enrollment-stats">
+                                    <span>Enrollment Audit:</span>
+                                    <strong>30 / 35 seats</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- C. SUB-VIEW: ADVANCED STATISTICS & ANALYTICS -->
+                    <div id="statistics-pane" class="tab-pane hidden">
+                        <div class="pane-header">
+                            <h2>Attendance Statistics & Analytics</h2>
+                            <p>Visualizing term attendance thresholds and risk score calculations</p>
+                        </div>
+
+                        <div class="analytics-layout">
+                            <!-- Section 1: Progress Metrics -->
+                            <div class="analytics-card">
+                                <h3>Roster Attendance Trends</h3>
+                                <p class="card-subtitle">Term percentage averages across current academic classes</p>
+                                <div class="trends-container">
+                                    <div class="trend-bar-row">
+                                        <span class="trend-label">English Advanced</span>
+                                        <div class="bar-wrapper">
+                                            <div class="progress-bar-fill" style="width: 94%;"></div>
+                                        </div>
+                                        <span class="trend-val">94%</span>
+                                    </div>
+                                    <div class="trend-bar-row">
+                                        <span class="trend-label">Speech & Presentation</span>
+                                        <div class="bar-wrapper">
+                                            <div class="progress-bar-fill" style="width: 88%;"></div>
+                                        </div>
+                                        <span class="trend-val">88%</span>
+                                    </div>
+                                    <div class="trend-bar-row">
+                                        <span class="trend-label">Conversational ESL</span>
+                                        <div class="bar-wrapper">
+                                            <div class="progress-bar-fill" style="width: 82%;"></div>
+                                        </div>
+                                        <span class="trend-val">82%</span>
+                                    </div>
+                                    <div class="trend-bar-row">
+                                        <span class="trend-label">Professional Writing</span>
+                                        <div class="bar-wrapper">
+                                            <div class="progress-bar-fill" style="width: 91%;"></div>
+                                        </div>
+                                        <span class="trend-val">91%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2: Risk Warning List -->
+                            <div class="analytics-card risk-warning-card">
+                                <h3>Low Attendance Risk Warnings</h3>
+                                <p class="card-subtitle">Active student records with cumulative presence ratings below
+                                    85%</p>
+                                <div class="risk-list">
+                                    <div class="risk-student-item">
+                                        <div class="student-profile-info">
+                                            <strong>Bob Johnson</strong>
+                                            <span>Conversational ESL (Grade 11)</span>
+                                        </div>
+                                        <div class="risk-percentage-indicator critical">
+                                            <span>Roster: 76.5%</span>
+                                        </div>
+                                    </div>
+                                    <div class="risk-student-item">
+                                        <div class="student-profile-info">
+                                            <strong>Charlie Brown</strong>
+                                            <span>Conversational ESL (Grade 11)</span>
+                                        </div>
+                                        <div class="risk-percentage-indicator warning">
+                                            <span>Roster: 81.2%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- D. SUB-VIEW: DATA EXPORT CONTROL CENTER -->
+                    <div id="export-pane" class="tab-pane hidden">
+                        <div class="pane-header">
+                            <h2>Data Export Control Center</h2>
+                            <p>Generate and compile class manifest ledgers into offline file formats</p>
+                        </div>
+
+                        <div class="export-workspace-card">
+                            <div class="filter-controls-row">
+                                <div class="filter-group">
+                                    <label for="export-class-selector">Target Class Group</label>
+                                    <select id="export-class-selector" class="export-dropdown">
+                                        <option value="all">All Class Registries</option>
+                                        <option value="english-adv">English Advanced</option>
+                                        <option value="speech-pres">Speech & Presentation</option>
+                                        <option value="conv-esl">Conversational ESL</option>
+                                        <option value="prof-writing">Professional Writing</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="export-date-selector">Date Range Window</label>
+                                    <select id="export-date-selector" class="export-dropdown">
+                                        <option value="current-week">Current Academic Week</option>
+                                        <option value="last-30">Last 30 Days</option>
+                                        <option value="term-date">Complete Fall 2026 Term</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Export Action Options -->
+                            <div class="export-options-grid">
+                                <div class="export-action-block">
+                                    <h4>CSV Roster Document</h4>
+                                    <p>Structured plain text table containing all student names, unique security IDs,
+                                        statuses, and date logs.</p>
+                                    <button class="btn-action-view btn-export-trigger" data-type="csv">
+                                        Generate CSV Report
+                                    </button>
+                                </div>
+                                <div class="export-action-block">
+                                    <h4>PDF Document Ledger</h4>
+                                    <p>Vector-rendered attendance sheet formatted with SpokenEnglish branding variables,
+                                        signatures, and timestamps.</p>
+                                    <button class="btn-action-view btn-export-trigger" data-type="pdf">
+                                        Compile PDF Document
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Progress Indicator -->
+                            <div id="export-progress-container" class="export-progress-panel hidden">
+                                <div class="progress-details">
+                                    <span id="export-progress-status">Compiling documents...</span>
+                                    <span id="export-progress-percent">0%</span>
+                                </div>
+                                <div class="export-progress-track">
+                                    <div id="export-progress-bar" class="export-progress-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E. SUB-VIEW: SYSTEM CONFIGURATION & SETTINGS -->
+                    <div id="settings-pane" class="tab-pane hidden">
+                        <div class="pane-header">
+                            <h2>System Settings & Diagnostics</h2>
+                            <p>Verify edge replication tokens, hardware health indices, and client configuration options
+                            </p>
+                        </div>
+
+                        <div class="settings-workspace-layout">
+                            <!-- Toggle Settings widgets -->
+                            <div class="settings-card">
+                                <h3>Operational Profile Switches</h3>
+                                <div class="toggle-control-group">
+                                    <div class="toggle-control-row">
+                                        <div class="toggle-label-pane">
+                                            <strong>Offline Sync Caching</strong>
+                                            <span>Temporarily queue attendance mutations locally if Netlify functions
+                                                are offline</span>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="toggle-offline-cache" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-control-row">
+                                        <div class="toggle-label-pane">
+                                            <strong>Automated Local Backups</strong>
+                                            <span>Write JSON backups to browser IndexedDB directories hourly</span>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="toggle-hourly-backup">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="toggle-control-row">
+                                        <div class="toggle-label-pane">
+                                            <strong>Secure Device Token Verification</strong>
+                                            <span>Enforce rigorous browser fingerprint checks during NeonDB sync</span>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="toggle-device-token" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Diagnostics Console -->
+                            <div class="settings-card diagnostics-card">
+                                <h3>Hardware Diagnostics & Logs</h3>
+                                <div class="diagnostic-logs-window">
+                                    <div class="log-line success">[OK] local_device_fingerprint validated. Verified:
+                                        true</div>
+                                    <div class="log-line success">[OK] IndexedDB schemas resolved correctly. Version: 2
+                                    </div>
+                                    <div class="log-line success">[OK] NeonDB endpoint: pg.neon.tech resolved to
+                                        connection pool: 6543</div>
+                                    <div class="log-line info">[INFO] Active local caching pool size: 0.00 KB</div>
+                                    <div class="log-line warning">[WARN] Background synchronization queue currently:
+                                        idle</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </section>
+
+        <!-- ============================================================================
+           VIEW 3: MULTI-DAY ATTENDANCE MATRIX VIEW
+           ============================================================================ -->
+        <section id="attendance-view" class="view-container hidden">
+            <!-- Header for Attendance Matrix -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button id="btn-back-dashboard" class="btn-back">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span>Back to Ledgers</span>
+                    </button>
+                    <div class="class-title-display">
+                        <h2 id="active-class-title">English Advanced</h2>
+                        <span class="divider">/</span>
+                        <span>Attendance Matrix</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="dna-badge">Device DNA: Verified ✓</span>
+                    <div class="profile-container">
+                        <div class="profile-avatar">H</div>
+                        <span class="profile-name">Hiam</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="matrix-workspace">
+                <!-- Matrix Table Grid -->
+                <div class="matrix-card-wrapper">
+                    <div class="table-wrapper">
+                        <table class="matrix-table-grid">
+                            <thead>
+                                <tr>
+                                    <th class="sticky-col">Student Name</th>
+                                    <th>Mon 07/06</th>
+                                    <th>Tue 07/07</th>
+                                    <th>Wed 07/08</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="matrix-body">
+                                <tr data-student-id="std-01">
+                                    <td class="sticky-col student-name-cell">
+                                        <div class="student-info-cell">
+                                            <strong>John Doe</strong>
+                                            <span>john.doe@spokenenglish.edu</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-text-delete" data-action="withdraw">Withdraw /
+                                            Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-student-id="std-02">
+                                    <td class="sticky-col student-name-cell">
+                                        <div class="student-info-cell">
+                                            <strong>Jane Smith</strong>
+                                            <span>jane.smith@spokenenglish.edu</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-text-delete" data-action="withdraw">Withdraw /
+                                            Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-student-id="std-03">
+                                    <td class="sticky-col student-name-cell">
+                                        <div class="student-info-cell">
+                                            <strong>Bob Johnson</strong>
+                                            <span>bob.johnson@spokenenglish.edu</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-text-delete" data-action="withdraw">Withdraw /
+                                            Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-student-id="std-04">
+                                    <td class="sticky-col student-name-cell">
+                                        <div class="student-info-cell">
+                                            <strong>Alice Williams</strong>
+                                            <span>alice.williams@spokenenglish.edu</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present active"
+                                                data-status="present">Present</button>
+                                            <button class="capsule-btn absent" data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-text-delete" data-action="withdraw">Withdraw /
+                                            Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-student-id="std-05">
+                                    <td class="sticky-col student-name-cell">
+                                        <div class="student-info-cell">
+                                            <strong>Charlie Brown</strong>
+                                            <span>charlie.brown@spokenenglish.edu</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capsule-toggle">
+                                            <button class="capsule-btn present" data-status="present">Present</button>
+                                            <button class="capsule-btn absent active"
+                                                data-status="absent">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-text-delete" data-action="withdraw">Withdraw /
+                                            Archive</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Matrix Save Controls Panel -->
+                <div class="matrix-save-container">
+                    <button id="btn-master-save" class="btn-primary btn-save">
+                        <span>MASTER BULK SAVE</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                    <div id="save-status-msg" class="save-status hidden">
+                        ✓ All attendance changes written to NeonDB logs successfully.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Symmetrical Notification Toast System -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
