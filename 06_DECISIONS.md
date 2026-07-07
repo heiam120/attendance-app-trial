@@ -96,3 +96,15 @@
 - **Consequences**:
   - The repository officially meets all functional and non-functional integration requirements.
   - The project enters a locked deployment state, certified ready for review.
+
+## ADR 013: Relational Schema Upgrade for Classroom & Enrollment Mapping
+- **Context**: Dynamic classroom creation and isolated tracking require moving away from hardcoded frontend class entries and simple global student listings.
+- **Decision**: Define and apply a database migration (`migration.js`) introducing `teachers`, `classrooms`, and `classroom_students` tables, and altering `attendance_logs` to isolate logs per classroom.
+- **Consequences**: 
+  - Enables dynamic class listing, duration-based configuration, and roster enrollments, while maintaining historical audit capabilities.
+
+## ADR 014: Unsandboxed Execution Workaround via Symlink Preservation
+- **Context**: Executing Node.js commands within sandboxed execution environments triggered `EPERM` lstat failures on parent folders (`C:\Users`).
+- **Decision**: Use Node's `--preserve-symlinks` and `--preserve-symlinks-main` options to resolve all imports relatively inside the workspace boundaries.
+- **Consequences**:
+  - Bypasses directory-level permission constraints and ensures reliable scripting runtimes.

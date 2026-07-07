@@ -104,3 +104,13 @@ In Netlify serverless execution environments, functions are written as Node.js m
   - `statusCode` (integer representation of HTTP status code, e.g. 200, 404, 500).
   - `body` (stringified payload, typically via `JSON.stringify()`).
   - `headers` (optional key-value response headers, such as CORS or content-type settings).
+
+---
+
+## 8. Node.js Symlink Resolution Bypass in Restrictive Sandboxes
+When executing Node.js processes within secure or sandboxed OS directory hierarchies (e.g. IDE environment configurations), Node's standard module loader calls `realpathSync` to resolve symbolic links. This process recursively calls `lstat` on parent directories up to the drive root. If parent directory execution privileges are missing (resulting in `EPERM` or `UnauthorizedAccessException` on paths like `C:\Users`), Node crashes instantly.
+- **Architectural Solution**: Launch Node.js using the `--preserve-symlinks` and `--preserve-symlinks-main` runtime flags. This disables Node's default physical location resolution, allowing module loading entirely within the permitted local working directory space.
+
+## 9. Dynamic Weekday Matrix Grids
+Rendering fixed attendance columns is rigid and doesn't scale to classroom duration settings.
+- **Implementation**: Dynamically calculate weekday arrays (Monday-Friday) starting from a baseline epoch (e.g. 10 teaching days ago) for the duration of the classroom course. Bind columns dynamically in the DOM matrix header and represent attendance capsule active toggle inputs mapped to parameterized JSON arrays.

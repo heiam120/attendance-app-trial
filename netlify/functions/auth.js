@@ -59,21 +59,40 @@ exports.handler = async (event, context) => {
     // ========================================================================
     // 4. SQL Execution / Authentication Logic
     // ========================================================================
-    // As per ADR 010, utilizing environment variables for demo admin context
-    // since the schema currently defines 'students' without an internal admin hierarchy.
-    const validEmail = process.env.ADMIN_EMAIL || 'admin@spokenenglish.com';
-    const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const validPassword = process.env.ADMIN_PASSWORD || 'SuperSecurePassword2026';
+    let client;
+    let userRecord = null;
 
-    if (email === validEmail && password === validPassword) {
+    try {
+      client = await pool.connect();
+      const res = await client.query(
+        'SELECT id, name, email FROM teachers WHERE email = $1 AND deleted_at IS NULL',
+        [email]
+      );
+      if (res.rows.length > 0) {
+        userRecord = res.rows[0];
+      }
+    } catch (err) {
+      console.error('[AUTH_DB_ERROR] Failed to query teacher:', err);
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+
+    // Check credential correctness
+    const isFallbackAdmin = email === (process.env.ADMIN_EMAIL || 'admin@spokenenglish.com');
+    if ((userRecord || isFallbackAdmin) && password === validPassword) {
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           success: true,
-          user: { 
-            id: 'admin-system-001', 
-            role: 'administrator', 
-            email: validEmail 
+          user: {
+            id: userRecord ? userRecord.id : 'admin-system-001',
+            role: 'teacher',
+            email: email,
+            name: userRecord ? userRecord.name : 'Administrator'
           }
         })
       };

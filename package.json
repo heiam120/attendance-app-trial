@@ -4,14 +4,12 @@
   "description": "Attendance tracking application",
   "main": "index.js",
   "scripts": {
-    "dev": "netlify dev"
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "netlify-cli": "^17.0.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "dotenv": "^17.4.2",
     "pg": "^8.22.0"

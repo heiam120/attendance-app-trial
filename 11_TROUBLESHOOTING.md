@@ -112,3 +112,17 @@ This ledger tracks diagnosed and resolved bugs, environment timeouts, layout mis
 ### Technical Solution
 - Hardened the `Pool` initialization across all three serverless endpoints (`auth.js`, `attendance.js`, `analytics.js`) by injecting an explicit `ssl: { rejectUnauthorized: false }` configuration object.
 - Injected an aggressive fast-fail validation check immediately at the start of the handlers (`if (!process.env.DATABASE_URL)`) to return an explicit `500 Server Configuration Error: Missing DATABASE_URL (.env)` instead of attempting a blind connection loop.
+
+---
+
+## Incident 009: Netlify CLI Compatibility Failure with Node.js v26
+
+### Error Description
+- Executing `npm run dev` (running `netlify dev`) fails immediately under Node.js v26.4.0 with a `TypeError: Cannot read properties of undefined (reading 'prototype')` inside `buffer-equal-constant-time/index.js:37` (referenced by `jwa` and `netlify-cli` subdependencies).
+
+### Architectural Root Cause
+- The local development environment was pinned to `"netlify-cli": "^17.0.0"`. This older release relies on deprecated and since-removed Node.js core library properties (specifically `SlowBuffer.prototype.equal`), causing a fatal crash when loaded in modern, strict Node.js v26 runtimes.
+
+### Technical Solution
+- Decoupled local development from Netlify CLI entirely by writing a zero-dependency dev server (`server.js`) that hosts the `public` static assets and routes serverless functions `/netlify/functions` by mapping request parameters and executing handler modules dynamically.
+- Removed `"netlify-cli"` from `package.json` devDependencies to prevent NPM install and post-install crashes, and redirected `"dev"` script to `"node server.js"`.
