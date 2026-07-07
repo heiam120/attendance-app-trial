@@ -114,3 +114,7 @@ When executing Node.js processes within secure or sandboxed OS directory hierarc
 ## 9. Dynamic Weekday Matrix Grids
 Rendering fixed attendance columns is rigid and doesn't scale to classroom duration settings.
 - **Implementation**: Dynamically calculate weekday arrays (Monday-Friday) starting from a baseline epoch (e.g. 10 teaching days ago) for the duration of the classroom course. Bind columns dynamically in the DOM matrix header and represent attendance capsule active toggle inputs mapped to parameterized JSON arrays.
+
+## 10. Days-Based Grid Columns Generation
+Rather than using generic month calculations (which default to arbitrary date counts like 12 days per month), classrooms now store explicit `duration_days`.
+- **Implementation**: The SPA calendar generator computes exactly `N` weekdays (Monday to Friday) starting from a baseline relative epoch (e.g. 10 days ago), allowing teachers to build and configure attendance sheets of exact sizes (such as 10-day intensive workshops or 45-day course terms) without layout gaps.

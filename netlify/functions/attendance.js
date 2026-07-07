@@ -50,11 +50,11 @@ exports.handler = async (event, context) => {
       // ACTION: LIST CLASSROOMS
       if (action === 'list_classrooms' || !action) {
         const query = `
-          SELECT c.id, c.name, c.duration_months, COUNT(cs.student_id)::int as capacity
+          SELECT c.id, c.name, c.duration_months, c.duration_days, COUNT(cs.student_id)::int as capacity
           FROM classrooms c
           LEFT JOIN classroom_students cs ON c.id = cs.classroom_id
           WHERE c.deleted_at IS NULL
-          GROUP BY c.id, c.name, c.duration_months
+          GROUP BY c.id, c.name, c.duration_months, c.duration_days
           ORDER BY c.name ASC
         `;
         const result = await client.query(query);
@@ -78,7 +78,7 @@ exports.handler = async (event, context) => {
 
         // 1. Fetch Classroom Metadata
         const classRes = await client.query(
-          'SELECT id, name, duration_months, created_at FROM classrooms WHERE id = $1 AND deleted_at IS NULL',
+          'SELECT id, name, duration_months, duration_days, created_at FROM classrooms WHERE id = $1 AND deleted_at IS NULL',
           [classroomId]
         );
         if (classRes.rows.length === 0) {
@@ -150,12 +150,12 @@ exports.handler = async (event, context) => {
 
       // ACTION: CREATE CLASSROOM
       if (action === 'create_classroom') {
-        const { name, duration_months, teacher_email } = payload;
-        if (!name || !duration_months) {
+        const { name, duration_months, duration_days, teacher_email } = payload;
+        if (!name || (!duration_days && !duration_months)) {
           return {
             statusCode: 400,
             headers,
-            body: JSON.stringify({ error: 'Validation failed: Missing name or duration_months.' })
+            body: JSON.stringify({ error: 'Validation failed: Missing name, duration_days, or duration_months.' })
           };
         }
 
@@ -178,11 +178,16 @@ exports.handler = async (event, context) => {
         }
 
         const insertQuery = `
-          INSERT INTO classrooms (name, duration_months, teacher_id)
-          VALUES ($1, $2, $3)
-          RETURNING id, name, duration_months;
+          INSERT INTO classrooms (name, duration_months, duration_days, teacher_id)
+          VALUES ($1, $2, $3, $4)
+          RETURNING id, name, duration_months, duration_days;
         `;
-        const result = await client.query(insertQuery, [name, parseInt(duration_months, 10), teacherId]);
+        const result = await client.query(insertQuery, [
+          name, 
+          parseInt(duration_months || 1, 10), 
+          parseInt(duration_days || 20, 10), 
+          teacherId
+        ]);
         
         // Log audit footprint
         await client.query(

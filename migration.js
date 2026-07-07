@@ -20,10 +20,10 @@ const seedStudents = [
 ];
 
 const seedClassrooms = [
-    { name: 'English Advanced', duration_months: 2 },
-    { name: 'Speech & Presentation', duration_months: 1 },
-    { name: 'Conversational ESL', duration_months: 3 },
-    { name: 'Professional Writing', duration_months: 2 }
+    { name: 'English Advanced', duration_months: 2, duration_days: 20 },
+    { name: 'Speech & Presentation', duration_months: 1, duration_days: 15 },
+    { name: 'Conversational ESL', duration_months: 3, duration_days: 20 },
+    { name: 'Professional Writing', duration_months: 2, duration_days: 15 }
 ];
 
 async function runMigration() {
@@ -50,6 +50,7 @@ async function runMigration() {
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 name VARCHAR(100) NOT NULL,
                 duration_months INT NOT NULL DEFAULT 1,
+                duration_days INT NOT NULL DEFAULT 20,
                 teacher_id UUID NOT NULL REFERENCES teachers(id) ON DELETE CASCADE,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
                 updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -138,10 +139,10 @@ async function runMigration() {
         const classroomIds = [];
         for (const c of seedClassrooms) {
             const res = await client.query(`
-                INSERT INTO classrooms (name, duration_months, teacher_id)
-                VALUES ($1, $2, $3)
+                INSERT INTO classrooms (name, duration_months, duration_days, teacher_id)
+                VALUES ($1, $2, $3, $4)
                 RETURNING id, name;
-            `, [c.name, c.duration_months, teacherId]);
+            `, [c.name, c.duration_months || 1, c.duration_days || 20, teacherId]);
             const classroomId = res.rows[0].id;
             classroomIds.push({ name: res.rows[0].name, id: classroomId });
             

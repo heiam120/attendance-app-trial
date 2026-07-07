@@ -200,13 +200,8 @@
                                         <input type="text" id="new-class-name" placeholder="e.g. Physics Advanced" required style="height: 38px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; width: 100%; font-family: inherit;">
                                     </div>
                                     <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 120px;">
-                                        <label for="new-class-duration" style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--color-text-secondary);">Course Duration</label>
-                                        <select id="new-class-duration" required style="height: 38px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; width: 100%; background: #fff; font-family: inherit;">
-                                            <option value="1">1 Month</option>
-                                            <option value="2">2 Months</option>
-                                            <option value="3">3 Months</option>
-                                            <option value="6">6 Months</option>
-                                        </select>
+                                        <label for="new-class-duration-days" style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--color-text-secondary);">Duration (Days)</label>
+                                        <input type="number" id="new-class-duration-days" min="1" max="90" value="20" required style="height: 38px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; width: 100%; font-family: inherit;">
                                     </div>
                                     <button type="submit" class="btn-primary" style="height: 38px; padding: 0 20px; border-radius: var(--radius-md);">
                                         CREATE

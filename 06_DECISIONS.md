@@ -108,3 +108,10 @@
 - **Decision**: Use Node's `--preserve-symlinks` and `--preserve-symlinks-main` options to resolve all imports relatively inside the workspace boundaries.
 - **Consequences**:
   - Bypasses directory-level permission constraints and ensures reliable scripting runtimes.
+
+## ADR 015: Shift to Explicit Teaching Days for Course Duration Configuration
+- **Context**: The month-based course duration configuration was too coarse, forcing attendance matrix screens to render arbitrary columns and leading to sizing mismatches for short workshops.
+- **Decision**: Update the database schema to include `duration_days` and rewrite classroom creation forms and endpoints to accept teaching days input directly. The dynamic matrix frontend renders exactly that count of weekday columns.
+- **Consequences**:
+  - Provides teachers with exact precision over the length of class ledger grids.
+  - Improves UX responsiveness on mobile views by shrinking column count to match the actual course scope.

@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         studentLastName: document.getElementById('new-student-last-name'),
         studentEmail: document.getElementById('new-student-email'),
         newClassName: document.getElementById('new-class-name'),
-        newClassDuration: document.getElementById('new-class-duration')
+        newClassDurationDays: document.getElementById('new-class-duration-days')
     };
 
     const labels = {
@@ -237,12 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>Spoken English Syllabus</span>
                     </div>
                 </td>
-                <td>${c.duration_months} ${c.duration_months === 1 ? 'Month' : 'Months'}</td>
+                <td>${c.duration_days || 20} ${c.duration_days === 1 ? 'Day' : 'Days'}</td>
                 <td>${c.capacity || 0} Students</td>
                 <td><span class="status-indicator active">Synced</span></td>
                 <td class="text-right actions-cell">
                     <div class="action-btn-wrapper">
-                        <button class="btn-action-view" data-action="view" data-class="${c.name}" data-duration="${c.duration_months}">View Matrix</button>
+                        <button class="btn-action-view" data-action="view" data-class="${c.name}" data-duration="${c.duration_days || 20}">View Matrix</button>
                         <button class="btn-action-view" data-action="rename" style="background: transparent; color: var(--color-primary); border: 1px solid var(--color-primary);">Rename</button>
                         <button class="btn-action-delete" data-action="archive">Archive</button>
                     </div>
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <h3>${c.name}</h3>
                 <div class="class-meta-details">
-                    <p><strong>Duration:</strong> ${c.duration_months} ${c.duration_months === 1 ? 'Month' : 'Months'}</p>
+                    <p><strong>Duration:</strong> ${c.duration_days || 20} ${c.duration_days === 1 ? 'Day' : 'Days'}</p>
                     <p><strong>Instructor:</strong> Hiam (admin)</p>
                     <p><strong>Registry Status:</strong> Active Course</p>
                 </div>
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================================
     // ATTENDANCE DATE CALCULATION
     // ============================================================================
-    function generateMatrixWeekdays(durationMonths) {
+    function generateMatrixWeekdays(durationDays) {
         const dates = [];
         let curr = new Date();
         
@@ -382,8 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Generate 12 teaching weekdays per month of duration, capped at 25 columns
-        const daysToGenerate = Math.min(25, durationMonths * 12);
+        // Generate exactly durationDays teaching weekdays
+        const daysToGenerate = parseInt(durationDays, 10) || 20;
         while (dates.length < daysToGenerate) {
             const d = curr.getDay();
             if (d !== 0 && d !== 6) {
@@ -418,10 +418,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const { classroom, students, logs } = result.data;
             state.matrixStudents = students;
             state.matrixLogs = logs;
-            state.activeClassDuration = classroom.duration_months;
+            state.activeClassDuration = classroom.duration_days || 20;
 
             // 2. Generate and render date column headers
-            state.matrixDates = generateMatrixWeekdays(classroom.duration_months);
+            state.matrixDates = generateMatrixWeekdays(classroom.duration_days || 20);
             renderMatrixHeader();
 
             // 3. Render student attendance records
@@ -767,9 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
     forms.createClass.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = inputs.newClassName.value.trim();
-        const duration = inputs.newClassDuration.value;
+        const durationDays = inputs.newClassDurationDays.value;
 
-        if (!name || !duration) return;
+        if (!name || !durationDays) return;
 
         try {
             showToast('Committing new classroom to NeonDB...', 'info');
@@ -779,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     action: 'create_classroom',
                     name,
-                    duration_months: duration,
+                    duration_days: parseInt(durationDays, 10),
                     teacher_email: state.currentUser ? state.currentUser.email : 'admin@spokenenglish.com'
                 })
             });
