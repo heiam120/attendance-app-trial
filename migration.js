@@ -49,6 +49,21 @@ async function runMigration() {
             );
         `);
 
+        console.log('🛠️ Creating students table if not exists...');
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS students (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                first_name VARCHAR(100) NOT NULL,
+                last_name VARCHAR(100) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                deleted_at TIMESTAMP WITH TIME ZONE NULL
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_students_active_email ON students(email) WHERE (deleted_at IS NULL);
+            CREATE INDEX IF NOT EXISTS idx_students_deleted_at ON students(deleted_at);
+        `);
+
         console.log('🛠️ Creating classrooms table if not exists...');
         await client.query(`
             CREATE TABLE IF NOT EXISTS classrooms (
@@ -72,23 +87,37 @@ async function runMigration() {
             );
         `);
 
-        console.log('🛠️ Adding classroom_id and updating constraints on attendance_logs...');
-        // Add column if it doesn't exist
+        console.log('🛠️ Creating attendance_logs table if not exists...');
         await client.query(`
-            ALTER TABLE attendance_logs 
-            ADD COLUMN IF NOT EXISTS classroom_id UUID REFERENCES classrooms(id) ON DELETE CASCADE;
+            CREATE TABLE IF NOT EXISTS attendance_logs (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                classroom_id UUID NOT NULL REFERENCES classrooms(id) ON DELETE CASCADE,
+                student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+                log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+                status VARCHAR(20) NOT NULL,
+                check_in_time TIMESTAMP WITH TIME ZONE NULL,
+                notes TEXT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                CONSTRAINT uq_classroom_student_date UNIQUE (classroom_id, student_id, log_date),
+                CONSTRAINT chk_attendance_status CHECK (status IN ('present', 'absent', 'tardy', 'excused'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_attendance_classroom_student_date ON attendance_logs(classroom_id, student_id, log_date);
         `);
 
-        // Drop the old constraints if they exist
+        console.log('🛠️ Creating audit_logs table if not exists...');
         await client.query(`
-            ALTER TABLE attendance_logs DROP CONSTRAINT IF EXISTS uq_student_date;
-            ALTER TABLE attendance_logs DROP CONSTRAINT IF EXISTS uq_classroom_student_date;
-        `);
-
-        // Add new unique constraint
-        await client.query(`
-            ALTER TABLE attendance_logs 
-            ADD CONSTRAINT uq_classroom_student_date UNIQUE (classroom_id, student_id, log_date);
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                table_name VARCHAR(50) NOT NULL,
+                record_id UUID NOT NULL,
+                action VARCHAR(20) NOT NULL,
+                old_values JSONB NULL,
+                new_values JSONB NULL,
+                performed_by VARCHAR(255) NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_audit_logs_target ON audit_logs(table_name, record_id);
         `);
 
         // Add updated_at trigger function and triggers for classrooms and teachers
