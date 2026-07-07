@@ -32,6 +32,11 @@ async function runMigration() {
     try {
         client = await pool.connect();
         
+        console.log('🧹 Dropping existing tables for a clean rebuild...');
+        await client.query(`
+            DROP TABLE IF EXISTS audit_logs, attendance_logs, classroom_students, classrooms, students, teachers CASCADE;
+        `);
+
         console.log('🛠️ Creating teachers table if not exists...');
         await client.query(`
             CREATE TABLE IF NOT EXISTS teachers (
