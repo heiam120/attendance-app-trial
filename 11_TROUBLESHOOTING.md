@@ -97,3 +97,18 @@ This ledger tracks diagnosed and resolved bugs, environment timeouts, layout mis
 ### Technical Solution
 - Refactored the connection architecture by moving the `pool.connect()` execution inside the `try` block (`let client; try { client = await pool.connect(); ...`).
 - Safely wrapped the `finally` block with a null check (`if (client) client.release();`) to ensure connection pools are not leaked if the initial connection fails.
+
+---
+
+## Incident 008: Internal Server Error due to Missing Explicit SSL and Edge Variables
+
+### Error Description
+- After patching the unhandled promise rejection bug (Incident 007), the UI surfaced an explicit `Database Connection Error: Internal Server Error`. The serverless function successfully caught the database connection failure, but it revealed that the NeonDB connection was genuinely failing from the Netlify AWS Lambda edge.
+
+### Architectural Root Cause
+- **SSL Rejection:** AWS Lambda environments often strip or mishandle URL-based `?sslmode=require` query parameters in the connection string, causing the Node-Postgres (`pg`) driver to abort the handshake with NeonDB.
+- **Missing Edge Variables:** If the `netlify env:import .env` command failed locally, the edge runtime would lack `DATABASE_URL`, causing `pg` to default to `localhost:5432` and fail implicitly.
+
+### Technical Solution
+- Hardened the `Pool` initialization across all three serverless endpoints (`auth.js`, `attendance.js`, `analytics.js`) by injecting an explicit `ssl: { rejectUnauthorized: false }` configuration object.
+- Injected an aggressive fast-fail validation check immediately at the start of the handlers (`if (!process.env.DATABASE_URL)`) to return an explicit `500 Server Configuration Error: Missing DATABASE_URL (.env)` instead of attempting a blind connection loop.

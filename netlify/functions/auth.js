@@ -5,6 +5,9 @@ const { Pool } = require('pg');
 // ============================================================================
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 exports.handler = async (event, context) => {
@@ -20,6 +23,15 @@ exports.handler = async (event, context) => {
   // Pre-flight request bypass
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
+  }
+
+  // Fast-fail if environment variables are missing on the edge
+  if (!process.env.DATABASE_URL || !process.env.ADMIN_EMAIL) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Server Configuration Error: Missing Environment Variables (.env)' })
+    };
   }
 
   try {
