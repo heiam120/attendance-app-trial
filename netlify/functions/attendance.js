@@ -22,10 +22,11 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers, body: '' };
   }
 
-  // Acquire dedicated client from the pool
-  const client = await pool.connect();
-
+  let client;
   try {
+    // Acquire dedicated client from the pool
+    client = await pool.connect();
+
     // ========================================================================
     // 3. Payload Validation & Routing
     // ========================================================================
@@ -129,6 +130,8 @@ exports.handler = async (event, context) => {
     };
   } finally {
     // Release the client safely back to the connection pool
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 };

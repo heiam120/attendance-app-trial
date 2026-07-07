@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         matrixBody: document.getElementById('matrix-body'),
         toast: document.getElementById('toast-container'),
         saveStatusMsg: document.getElementById('save-status-msg'),
-        
+
         // Export Progress Components
         exportProgressPanel: document.getElementById('export-progress-container'),
         exportProgressBar: document.getElementById('export-progress-bar'),
@@ -140,17 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/.netlify/functions/analytics');
             const result = await response.json();
-            
+
             if (response.ok && result.success) {
                 appendDiagnosticLog('[OK] Serverless Analytics GET: Aggregations mapped to DOM.');
-                
+
                 // Map database values to UI Dashboard Metrics
                 const metrics = document.querySelectorAll('.metric-value');
                 if (metrics.length >= 3) {
                     const totals = result.data.summary_metrics;
                     const presence = totals.present || 0;
                     const sum = presence + (totals.absent || 0) + (totals.tardy || 0) + (totals.excused || 0);
-                    
+
                     if (sum > 0) {
                         // Dynamically update the metric cards
                         metrics[1].textContent = sum; // Active Enrollment / Assumed total entries
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Secure Authentication Submit Handler
     forms.login.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const email = inputs.email.value;
         const password = inputs.password.value;
 
@@ -260,19 +260,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // View Attendance Matrix for active class group
             state.activeClass = classId;
             labels.activeClassTitle.textContent = className;
-            
+
             // Clear static placeholders and show spinner
             container.matrixBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--color-text-light);">Connecting to NeonDB and generating registry...</td></tr>';
             transitionTo('attendance-view');
             showToast(`Initiating sync loop for roster: ${className}...`, 'success');
-            
+
             try {
                 const response = await fetch('/.netlify/functions/attendance');
                 const result = await response.json();
-                
+
                 if (response.ok && result.success) {
                     container.matrixBody.innerHTML = ''; // Wipe loading state
-                    
+
                     result.data.forEach(student => {
                         const tr = document.createElement('tr');
                         tr.setAttribute('data-student-id', student.id);
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         container.matrixBody.appendChild(tr);
                     });
-                    
+
                     showToast(`NeonDB Roster loaded: ${result.data.length} active students.`, 'success');
                     appendDiagnosticLog(`[OK] Serverless Attendance GET: Database returned ${result.data.length} active records.`);
                 } else {
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const student_id = row.getAttribute('data-student-id');
             // Sample standard 3rd-day column for active status extraction
             const activeBtn = row.querySelector('td:nth-child(4) .capsule-btn.active');
-            
+
             if (student_id && activeBtn) {
                 logs.push({
                     student_id: student_id,
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.saveStatusMsg.classList.remove('hidden');
                 showToast(data.message || 'All buffered attendance logs synced successfully.', 'success');
                 appendDiagnosticLog(`[OK] Serverless Attendance POST: NeonDB UPSERT completed for ${logs.length} records.`);
-                
+
                 // Re-trigger analytics sync silently to update dashboard numbers
                 loadAnalyticsData();
             } else {
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             state.isExporting = true;
             const docType = btn.getAttribute('data-type').toUpperCase();
-            
+
             // Show Progress panel
             container.exportProgressPanel.classList.remove('hidden');
             container.exportProgressBar.style.width = '0%';
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         container.exportProgressPanel.classList.add('hidden');
                         showToast(`${docType} manifest compilation complete.`, 'success');
                         appendDiagnosticLog(`[OK] Generated offline ${docType} report artifact download stream.`);
-                        
+
                         // Active prompt confirming download
                         if (confirm(`${docType} file compiled successfully!\nReady for Download. Proceed with file save?`)) {
                             showToast(`File download started.`, 'success');

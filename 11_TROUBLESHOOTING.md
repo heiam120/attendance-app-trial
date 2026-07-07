@@ -83,3 +83,17 @@ This ledger tracks diagnosed and resolved bugs, environment timeouts, layout mis
 
 ### Technical Solution
 - Executed targeted code replacements to remove the invalid backslash escapes surrounding the template strings, successfully restoring syntax integrity and dynamic rendering logic.
+
+---
+
+## Incident 007: Unhandled Promise Rejection on Database Connection Failure
+
+### Error Description
+- The UI surfaced a `Database Connection Error: Unknown NeonDB Query Error` when navigating to the Attendance Matrix. This occurred because the Netlify Serverless endpoint crashed with a generic 500 error instead of returning a properly formatted JSON error payload.
+
+### Architectural Root Cause
+- The `const client = await pool.connect();` instruction inside `attendance.js` and `analytics.js` was positioned *outside* the primary `try/catch` execution block. If the local environment `.env` variables were missing or the database connection failed, Node.js threw an unhandled promise rejection. The Netlify runtime caught this fatal error and returned an AWS Lambda exception payload (missing the custom `error` string property), causing the frontend JSON parser to default to the fallback "Unknown NeonDB Query Error" message.
+
+### Technical Solution
+- Refactored the connection architecture by moving the `pool.connect()` execution inside the `try` block (`let client; try { client = await pool.connect(); ...`).
+- Safely wrapped the `finally` block with a null check (`if (client) client.release();`) to ensure connection pools are not leaked if the initial connection fails.

@@ -37,10 +37,11 @@ exports.handler = async (event, context) => {
     // Validation try block edge case
   }
 
-  // Acquire dedicated client from the pool
-  const client = await pool.connect();
-
+  let client;
   try {
+    // Acquire dedicated client from the pool
+    client = await pool.connect();
+
     // ========================================================================
     // 4. SQL Execution (Aggregations and Reporting)
     // ========================================================================
@@ -100,6 +101,8 @@ exports.handler = async (event, context) => {
     };
   } finally {
     // Release the client safely back to the connection pool
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 };
