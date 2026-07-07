@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const forms = {
-        login: document.getElementById('login-form')
+        login: document.getElementById('login-form'),
+        addStudent: document.getElementById('add-student-form')
     };
 
     const buttons = {
@@ -64,7 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
         password: document.getElementById('login-password'),
         offlineCache: document.getElementById('toggle-offline-cache'),
         hourlyBackup: document.getElementById('toggle-hourly-backup'),
-        deviceToken: document.getElementById('toggle-device-token')
+        deviceToken: document.getElementById('toggle-device-token'),
+        studentFirstName: document.getElementById('new-student-first-name'),
+        studentLastName: document.getElementById('new-student-last-name'),
+        studentEmail: document.getElementById('new-student-email')
     };
 
     const labels = {
@@ -365,23 +369,116 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 7. Matrix Grid Student Withdrawal (Soft-Delete)
-    container.matrixBody.addEventListener('click', (e) => {
+    container.matrixBody.addEventListener('click', async (e) => {
         const btn = e.target;
         if (btn.dataset.action !== 'withdraw') return;
 
         const row = btn.closest('tr');
+        const studentId = row.getAttribute('data-student-id');
         const studentName = row.querySelector('.student-info-cell strong').textContent;
 
         if (confirm(`Withdraw student: "${studentName}" from active matrices?`)) {
-            row.style.opacity = '0';
-            row.style.transform = 'translateY(15px)';
-            row.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            try {
+                showToast(`Withdrawing student ${studentName}...`, 'info');
+                const response = await fetch('/.netlify/functions/attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'delete_student', student_id: studentId })
+                });
+                const result = await response.json();
 
-            setTimeout(() => {
-                row.remove();
-                showToast(`Student "${studentName}" set to inactive.`, 'accent');
-                appendDiagnosticLog(`[INFO] Set deleted_at timestamp on student record: "${studentName}"`);
-            }, 300);
+                if (response.ok && result.success) {
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateY(15px)';
+                    row.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+
+                    setTimeout(() => {
+                        row.remove();
+                        showToast(`Student "${studentName}" set to inactive.`, 'accent');
+                        appendDiagnosticLog(`[INFO] Set deleted_at timestamp on student record: "${studentName}" (ID: ${studentId})`);
+                    }, 300);
+                } else {
+                    throw new Error(result.error || 'Failed to delete student.');
+                }
+            } catch (err) {
+                showToast(`Delete failed: ${err.message}`, 'accent');
+                appendDiagnosticLog(`[WARN] Student deletion failed: ${err.message}`);
+            }
+        }
+    });
+
+    // 7.5 Register New Student Form Handler
+    forms.addStudent.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const firstName = inputs.studentFirstName.value.trim();
+        const lastName = inputs.studentLastName.value.trim();
+        const email = inputs.studentEmail.value.trim();
+
+        if (!firstName || !lastName || !email) return;
+
+        try {
+            showToast('Registering student to NeonDB...', 'info');
+            const response = await fetch('/.netlify/functions/attendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'add_student',
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email
+                })
+            });
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                const student = result.data;
+                
+                // Dynamically append new student row to the Attendance Matrix Grid
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-student-id', student.id);
+                tr.innerHTML = `
+                    <td class="sticky-col student-name-cell">
+                        <div class="student-info-cell">
+                            <strong>${student.first_name} ${student.last_name}</strong>
+                            <span>${student.email}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="capsule-toggle">
+                            <button class="capsule-btn present" data-status="present">Present</button>
+                            <button class="capsule-btn absent active" data-status="absent">Absent</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="capsule-toggle">
+                            <button class="capsule-btn present" data-status="present">Present</button>
+                            <button class="capsule-btn absent active" data-status="absent">Absent</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="capsule-toggle">
+                            <button class="capsule-btn present" data-status="present">Present</button>
+                            <button class="capsule-btn absent active" data-status="absent">Absent</button>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <button class="btn-text-delete" data-action="withdraw">Withdraw / Archive</button>
+                    </td>
+                `;
+                container.matrixBody.appendChild(tr);
+
+                // Clear input fields
+                forms.addStudent.reset();
+
+                showToast(`Student "${student.first_name} ${student.last_name}" registered successfully.`, 'success');
+                appendDiagnosticLog(`[OK] Inserted student record to NeonDB: "${student.first_name} ${student.last_name}" (ID: ${student.id})`);
+            } else {
+                throw new Error(result.error || 'Failed to register student.');
+            }
+        } catch (err) {
+            showToast(`Registration failed: ${err.message}`, 'accent');
+            appendDiagnosticLog(`[WARN] Student registration failed: ${err.message}`);
         }
     });
 

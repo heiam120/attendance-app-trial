@@ -1365,6 +1365,72 @@ th.sticky-col {
     color: var(--color-text-secondary);
 }
 
+/* Interactive Roster Registration Card */
+.add-student-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    padding: 20px;
+    margin-top: 24px;
+    box-shadow: var(--shadow-soft);
+}
+
+.card-header-compact h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.subtitle-compact {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    margin-bottom: 16px;
+}
+
+.add-student-inline-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.input-field-compact input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+}
+
+.btn-add-student {
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-md);
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-add-student:hover {
+    background-color: #24356a;
+}
+
+@media (max-width: 768px) {
+    .add-student-inline-form {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .btn-add-student {
+        width: 100%;
+    }
+}
+
 /* ============================================================================
    TRANSITIONS KEYFRAMES
    ============================================================================ */

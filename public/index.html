@@ -30,12 +30,12 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label for="login-email">Security ID / Email</label>
-                        <input type="email" id="login-email" placeholder="hiam.teacher@spokenenglish.edu"
-                            value="hiam.teacher@spokenenglish.edu" required autocomplete="username">
+                        <input type="email" id="login-email" placeholder="admin@spokenenglish.com"
+                            value="admin@spokenenglish.com" required autocomplete="username">
                     </div>
                     <div class="form-group">
                         <label for="login-password">Security Key</label>
-                        <input type="password" id="login-password" placeholder="••••••••" value="password123" required
+                        <input type="password" id="login-password" placeholder="••••••••" value="SuperSecurePassword2026" required
                             autocomplete="current-password">
                     </div>
                     <button type="submit" id="btn-login" class="btn-primary">
@@ -753,6 +753,28 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- Interactive Roster Management: Register Student -->
+                <div class="add-student-card">
+                    <div class="card-header-compact">
+                        <h3>Register Student to Active Matrix</h3>
+                        <p class="subtitle-compact">Add student credentials directly into the NeonDB database pool</p>
+                    </div>
+                    <form id="add-student-form" class="add-student-inline-form">
+                        <div class="input-field-compact">
+                            <input type="text" id="new-student-first-name" placeholder="First Name" required>
+                        </div>
+                        <div class="input-field-compact">
+                            <input type="text" id="new-student-last-name" placeholder="Last Name" required>
+                        </div>
+                        <div class="input-field-compact">
+                            <input type="email" id="new-student-email" placeholder="student.name@spokenenglish.edu" required>
+                        </div>
+                        <button type="submit" class="btn-primary btn-add-student">
+                            <span>REGISTER STUDENT</span>
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Matrix Save Controls Panel -->

@@ -61,9 +61,70 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // --- POST HANDLER (UPSERT Attendance Logs) ---
+    // --- POST HANDLER (ROUTING ACTIONS) ---
     if (event.httpMethod === 'POST') {
       const payload = JSON.parse(event.body || '{}');
+      const action = payload.action;
+
+      // ACTION: ADD STUDENT
+      if (action === 'add_student') {
+        const { first_name, last_name, email } = payload;
+        if (!first_name || !last_name || !email) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Validation failed: Missing student info (first_name, last_name, email).' })
+          };
+        }
+
+        const insertQuery = `
+          INSERT INTO students (first_name, last_name, email)
+          VALUES ($1, $2, $3)
+          RETURNING id, first_name, last_name, email;
+        `;
+        const result = await client.query(insertQuery, [first_name, last_name, email]);
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ success: true, data: result.rows[0] })
+        };
+      }
+
+      // ACTION: DELETE STUDENT (SOFT-DELETE)
+      if (action === 'delete_student') {
+        const { student_id } = payload;
+        if (!student_id) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Validation failed: Missing student_id.' })
+          };
+        }
+
+        const deleteQuery = `
+          UPDATE students 
+          SET deleted_at = CURRENT_TIMESTAMP 
+          WHERE id = $1
+          RETURNING id;
+        `;
+        const result = await client.query(deleteQuery, [student_id]);
+        
+        if (result.rowCount === 0) {
+          return {
+            statusCode: 404,
+            headers,
+            body: JSON.stringify({ error: 'Student not found.' })
+          };
+        }
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ success: true, student_id: result.rows[0].id })
+        };
+      }
+
+      // FALLBACK ACTION: UPSERT ATTENDANCE LOGS
       const logs = payload.logs;
       const log_date = payload.log_date;
 
