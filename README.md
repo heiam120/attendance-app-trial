@@ -76,6 +76,7 @@ npm run dev
 Open your browser at **`http://localhost:8888`** and login with:
 - **Email**: `admin@spokenenglish.com`
 - **Password**: `SuperSecurePassword2026`
+- https://spokenenglish-attendance-app.netlify.app/
 
 ---
 
